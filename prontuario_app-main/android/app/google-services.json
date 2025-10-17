@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1043374439093:android:3805528057e01b423a5cfc",
+        "android_client_info": {
+          "package_name": "com.example.appfirebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpOBH4ZK3DLDrYZN4_YnQB3udhMbu7mSo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1043374439093:android:643a009d3555b2fa3a5cfc",
         "android_client_info": {
           "package_name": "prontuario.Faculdade69"
