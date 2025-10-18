@@ -6,7 +6,16 @@ class FirestoreService {
       .collection('prontuarios');
 
   Future<void> adicionarProntuario(Prontuario prontuario) async {
-    await prontuariosCollection.add(prontuario.toMap());
+     try {
+      final docRef = await prontuariosCollection.add(prontuario.toMap());
+      print('Firestore add succeeded: ${docRef.id}');
+    } on FirebaseException catch (e) {
+      print('Firestore write failed: ${e.code} ${e.message}');
+      rethrow;
+    } catch (e, st) {
+      print('Unknown error adding prontuario: $e\n$st');
+      rethrow;
+    }
   }
 
   Future<void> deletarProntuario(String id) async {
