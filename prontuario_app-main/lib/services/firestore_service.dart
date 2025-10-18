@@ -22,6 +22,23 @@ class FirestoreService {
     await prontuariosCollection.doc(id).delete();
   }
 
+  Future<void> atualizarProntuario(Prontuario prontuario) async {
+    if (prontuario.id == null) {
+      throw ArgumentError('Documento precisa de um ID valido');
+    }
+
+    try {
+      await prontuariosCollection.doc(prontuario.id).update(prontuario.toMap());
+      print('Firestore atualizado com sucesso: ${prontuario.id}');
+    } on FirebaseException catch (e) {
+      print('Falha ao atualizar Firestore: ${e.code} ${e.message}');
+      rethrow;
+    } catch (e, st) {
+      print('Erro desconhecido ao atualizar prontuario: $e\n$st');
+      rethrow;
+    }
+  }
+
   Stream<List<Prontuario>> getProntuarios() {
     return prontuariosCollection.snapshots().map(
       (snapshot) => snapshot.docs

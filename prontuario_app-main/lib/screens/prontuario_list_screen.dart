@@ -211,6 +211,9 @@ class _ProntuarioListScreenState extends State<ProntuarioListScreen> {
                           return ListTile(
                             title: Text(p.paciente),
                             subtitle: Text(p.descricao),
+                            onTap: () async {
+                              final updated = await Navigator.push(context, MaterialPageRoute(builder: (_) => FormularioProntuarioScreen(prontuario: p)));
+                            },
                             trailing: IconButton(
                               icon: Icon(Icons.delete),
                               onPressed: () =>
