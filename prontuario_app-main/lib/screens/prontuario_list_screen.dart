@@ -1,15 +1,37 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:prontuario_app/screens/formulario_prontuario_screen.dart';
+
 import '../models/prontuario.dart';
 import '../services/firestore_service.dart';
-import 'package:prontuario_app/screens/formulario_prontuario_screen.dart';
 
 class ProntuarioListScreen extends StatelessWidget {
   final FirestoreService firestoreService = FirestoreService();
 
+  ProntuarioListScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Prontuários')),
+      appBar: AppBar(
+        title: Text('Prontuários'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Logout realizado com sucesso!'),
+                  ),
+                );
+              }
+            },
+            tooltip: 'Sair',
+          ),
+        ],
+      ),
       body: StreamBuilder<List<Prontuario>>(
         stream: firestoreService.getProntuarios(),
         builder: (context, snapshot) {
@@ -25,7 +47,7 @@ class ProntuarioListScreen extends StatelessWidget {
           if (prontuarios.isEmpty) {
             return Center(child: Text('Nenhum prontuário encontrado'));
           }
-          
+
           return ListView.builder(
             itemCount: prontuarios.length,
             itemBuilder: (context, index) {

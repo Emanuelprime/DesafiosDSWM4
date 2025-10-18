@@ -1,19 +1,22 @@
-import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'screens/prontuario_list_screen.dart'; // Tela principal com lista de prontuários
-import 'firebase_options.dart'; //
+import 'package:flutter/material.dart';
+
+import 'firebase_options.dart';
+import 'screens/login_screen.dart';
+import 'screens/prontuario_list_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Só inicializa se ainda não existir
   try {
-      if (Firebase.apps.isEmpty) {
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        );
-      } else {
-        Firebase.app();
-      }
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } else {
+      Firebase.app();
+    }
     final opts = Firebase.apps.first.options;
     print('Firebase initialized. projectId=${opts.projectId}');
   } catch (e, st) {
@@ -24,6 +27,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,7 +38,25 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       debugShowCheckedModeBanner: false,
-      home: ProntuarioListScreen(), // Tela inicial do app
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          // Show loading while checking auth state
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          // If user is logged in, show main screen
+          if (snapshot.hasData) {
+            return ProntuarioListScreen();
+          }
+
+          // Otherwise show login screen
+          return const LoginScreen();
+        },
+      ),
     );
   }
 }
