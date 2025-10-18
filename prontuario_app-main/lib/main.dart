@@ -6,12 +6,18 @@ import 'firebase_options.dart'; //
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Só inicializa se ainda não existir
-  if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } else {
-    Firebase.app(); // pega a instância já existente
+  try {
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      } else {
+        Firebase.app();
+      }
+    final opts = Firebase.apps.first.options;
+    print('Firebase initialized. projectId=${opts.projectId}');
+  } catch (e, st) {
+    print('Firebase init error: $e\n$st');
   }
 
   runApp(MyApp());

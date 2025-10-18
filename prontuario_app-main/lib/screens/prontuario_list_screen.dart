@@ -13,10 +13,19 @@ class ProntuarioListScreen extends StatelessWidget {
       body: StreamBuilder<List<Prontuario>>(
         stream: firestoreService.getProntuarios(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
+          if (snapshot.hasError) {
+            return Center(child: Text('Erro: ${snapshot.error}'));
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
 
-          final prontuarios = snapshot.data!;
+          final prontuarios = snapshot.data ?? [];
+
+          if (prontuarios.isEmpty) {
+            return Center(child: Text('Nenhum prontuário encontrado'));
+          }
+          
           return ListView.builder(
             itemCount: prontuarios.length,
             itemBuilder: (context, index) {
