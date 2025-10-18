@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:prontuario_app/screens/formulario_prontuario_screen.dart';
+import 'package:prontuario_app/screens/login_screen.dart';
 
 import '../models/prontuario.dart';
 import '../services/firestore_service.dart';
@@ -19,13 +20,47 @@ class ProntuarioListScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Logout realizado com sucesso!'),
-                  ),
-                );
+              // Show loading dialog
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) =>
+                    const Center(child: CircularProgressIndicator()),
+              );
+
+              try {
+                await FirebaseAuth.instance.signOut();
+
+                if (context.mounted) {
+                  // Close loading dialog
+                  Navigator.of(context).pop();
+
+                  // Navigate to login screen and remove all previous routes
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+                  );
+
+                  // Show success message on the login screen
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Logout realizado com sucesso!'),
+                        ),
+                      );
+                    }
+                  });
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  // Close loading dialog
+                  Navigator.of(context).pop();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Erro ao fazer logout: $e')),
+                  );
+                }
               }
             },
             tooltip: 'Sair',
