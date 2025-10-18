@@ -49,7 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
         // Navigate to main list screen
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => ProntuarioListScreen()),
+          MaterialPageRoute(builder: (_) => const ProntuarioListScreen()),
           (route) => false,
         );
       }

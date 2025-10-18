@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
 
           // If user is logged in, show main screen
           if (snapshot.hasData) {
-            return ProntuarioListScreen();
+            return const ProntuarioListScreen();
           }
 
           // Otherwise show login screen

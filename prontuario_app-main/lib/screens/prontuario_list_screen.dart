@@ -6,10 +6,45 @@ import 'package:prontuario_app/screens/login_screen.dart';
 import '../models/prontuario.dart';
 import '../services/firestore_service.dart';
 
-class ProntuarioListScreen extends StatelessWidget {
-  final FirestoreService firestoreService = FirestoreService();
+class ProntuarioListScreen extends StatefulWidget {
+  const ProntuarioListScreen({super.key});
 
-  ProntuarioListScreen({super.key});
+  @override
+  State<ProntuarioListScreen> createState() => _ProntuarioListScreenState();
+}
+
+class _ProntuarioListScreenState extends State<ProntuarioListScreen> {
+  final FirestoreService firestoreService = FirestoreService();
+  final TextEditingController _searchController = TextEditingController();
+  final ValueNotifier<String> _searchQuery = ValueNotifier<String>('');
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      _searchQuery.value = _searchController.text;
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchQuery.dispose();
+    super.dispose();
+  }
+
+  List<Prontuario> _filterProntuarios(
+    List<Prontuario> prontuarios,
+    String query,
+  ) {
+    if (query.isEmpty) {
+      return prontuarios;
+    }
+
+    return prontuarios.where((p) {
+      return p.paciente.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,23 +112,115 @@ class ProntuarioListScreen extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
 
-          final prontuarios = snapshot.data ?? [];
+          final allProntuarios = snapshot.data ?? [];
 
-          if (prontuarios.isEmpty) {
-            return Center(child: Text('Nenhum prontuário encontrado'));
-          }
+          return ValueListenableBuilder<String>(
+            valueListenable: _searchQuery,
+            builder: (context, searchValue, _) {
+              final prontuarios = _filterProntuarios(
+                allProntuarios,
+                searchValue,
+              );
 
-          return ListView.builder(
-            itemCount: prontuarios.length,
-            itemBuilder: (context, index) {
-              final p = prontuarios[index];
-              return ListTile(
-                title: Text(p.paciente),
-                subtitle: Text(p.descricao),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () => firestoreService.deletarProntuario(p.id!),
-                ),
+              return Column(
+                children: [
+                  // Search bar
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Buscar por nome do paciente',
+                        hintText: 'Digite o nome...',
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: searchValue.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear),
+                                onPressed: () {
+                                  _searchController.clear();
+                                },
+                              )
+                            : null,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Results count
+                  if (allProntuarios.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            '${prontuarios.length} de ${allProntuarios.length} prontuários',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  const SizedBox(height: 8),
+
+                  // List
+                  if (prontuarios.isEmpty && searchValue.isNotEmpty)
+                    Expanded(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 64,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Nenhum prontuário encontrado',
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'para "$searchValue"',
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else if (prontuarios.isEmpty)
+                    Expanded(
+                      child: Center(
+                        child: Text('Nenhum prontuário encontrado'),
+                      ),
+                    )
+                  else
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: prontuarios.length,
+                        itemBuilder: (context, index) {
+                          final p = prontuarios[index];
+                          return ListTile(
+                            title: Text(p.paciente),
+                            subtitle: Text(p.descricao),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () =>
+                                  firestoreService.deletarProntuario(p.id!),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                ],
               );
             },
           );
