@@ -216,8 +216,18 @@ class _ProntuarioListScreenState extends State<ProntuarioListScreen> {
                             },
                             trailing: IconButton(
                               icon: Icon(Icons.delete),
-                              onPressed: () =>
-                                  firestoreService.deletarProntuario(p.id!),
+                              onPressed: () async {
+                                try {
+                                  await firestoreService.deletarProntuario(p.id!);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Prontuário de ${p.paciente} excluído')),
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Erro ao excluir: $e')),
+                                  );
+                                }
+                              }
                             ),
                           );
                         },
