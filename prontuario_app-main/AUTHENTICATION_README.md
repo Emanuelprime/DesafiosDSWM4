@@ -42,18 +42,9 @@
 - Feedback com SnackBar após logout
 - Redirecionamento automático para tela de login
 
-### 🎨 Estilo Consistente
 
-Ambas as páginas seguem o mesmo padrão visual:
-- AppBar verde com título
-- Ícones temáticos (account_circle para login, person_add para registro)
-- Campos de formulário com borda e ícones prefix
-- Botões principais em verde
-- CircularProgressIndicator durante operações
-- TextButtons para navegação secundária
-- Padding e espaçamento consistentes
 
-### 🔧 Dependências Adicionadas
+###  Dependências Adicionadas
 
 ```yaml
 dependencies:
@@ -62,27 +53,4 @@ dependencies:
   cloud_firestore: ^4.7.3
 ```
 
-## 🚀 Como Testar
 
-1. Execute o aplicativo:
-```powershell
-cd 'c:\Users\marco\Desktop\VSCODE\Desafios\DesafiosDSWM4\prontuario_app-main'
-flutter run
-```
-
-2. Fluxo de teste:
-   - Aplicativo abre na tela de login
-   - Clique em "Não tem conta? Cadastrar"
-   - Preencha os dados e crie uma conta
-   - Será redirecionado para a lista de prontuários
-   - Clique no ícone de logout (canto superior direito)
-   - Faça login novamente com as credenciais criadas
-
-## 📋 Funcionalidades de Segurança
-
-- Senhas nunca são exibidas (obscureText: true)
-- Validação de e-mail com regex
-- Senha mínima de 6 caracteres
-- Tratamento de todos os erros comuns do Firebase Auth
-- Verificação de autenticação em tempo real
-- Navegação segura com verificação de `mounted`
