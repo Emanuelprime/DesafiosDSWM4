@@ -55,7 +55,7 @@ class _ProntuarioListScreenState extends State<ProntuarioListScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              // Show loading dialog
+              // mostrar tela de carregamento
               showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -67,16 +67,16 @@ class _ProntuarioListScreenState extends State<ProntuarioListScreen> {
                 await FirebaseAuth.instance.signOut();
 
                 if (context.mounted) {
-                  // Close loading dialog
+                  // fechar tela de carregamento se deu certo
                   Navigator.of(context).pop();
 
-                  // Navigate to login screen and remove all previous routes
+                  // voltar para o login e limpar a pilha de rotas
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (_) => const LoginScreen()),
                     (route) => false,
                   );
 
-                  // Show success message on the login screen
+                  // mostra mensagem sucesso ;)
                   Future.delayed(const Duration(milliseconds: 300), () {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -89,9 +89,10 @@ class _ProntuarioListScreenState extends State<ProntuarioListScreen> {
                 }
               } catch (e) {
                 if (context.mounted) {
-                  // Close loading dialog
+                  // fechar tela de carregamento
                   Navigator.of(context).pop();
 
+                  // mostrar erro
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Erro ao fazer logout: $e')),
                   );
@@ -124,7 +125,7 @@ class _ProntuarioListScreenState extends State<ProntuarioListScreen> {
 
               return Column(
                 children: [
-                  // Search bar
+                  // barra de busca
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: TextField(
@@ -148,7 +149,7 @@ class _ProntuarioListScreenState extends State<ProntuarioListScreen> {
                     ),
                   ),
 
-                  // Results count
+                  // resultados (estatisticas)
                   if (allProntuarios.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -167,7 +168,7 @@ class _ProntuarioListScreenState extends State<ProntuarioListScreen> {
 
                   const SizedBox(height: 8),
 
-                  // List
+                  // lista de resultados
                   if (prontuarios.isEmpty && searchValue.isNotEmpty)
                     Expanded(
                       child: Center(

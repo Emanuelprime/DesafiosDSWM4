@@ -39,7 +39,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             password: _passwordController.text,
           );
 
-      // Update display name
+      // atualiza o nome
       await credential.user?.updateDisplayName(_nameController.text.trim());
 
       if (mounted) {
@@ -47,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           const SnackBar(content: Text('Cadastro realizado com sucesso!')),
         );
 
-        // Navigate to main list screen
+        // se for um cadastro bem sucedido, volta para a lista de prontuários
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const ProntuarioListScreen()),
           (route) => false,

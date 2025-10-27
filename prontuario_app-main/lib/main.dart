@@ -8,7 +8,7 @@ import 'screens/prontuario_list_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Só inicializa se ainda não existir
+  // só inicializa se ainda não existir
   try {
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
@@ -41,19 +41,19 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          // Show loading while checking auth state
+          // mostrar loading enquanto ainda faz o carregamento do firebase e validações de login
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
 
-          // If user is logged in, show main screen
+          // se o usuario esta logado no sistema, exibe a lista de prontuarios
           if (snapshot.hasData) {
             return const ProntuarioListScreen();
           }
 
-          // Otherwise show login screen
+          // senao, volta pra tela de login
           return const LoginScreen();
         },
       ),
