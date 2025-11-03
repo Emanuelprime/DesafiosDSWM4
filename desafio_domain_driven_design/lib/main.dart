@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'features/todo/data/repositories/todo_repository.dart';
-import 'features/todo/domain/usecases/getTodos_usecase.dart';
 import 'features/todo/domain/usecases/addTodo_usecase.dart';
-import 'features/todo/domain/usecases/updateTodo_usecase.dart';
 import 'features/todo/domain/usecases/deleteTodo.usecase.dart';
+import 'features/todo/domain/usecases/getTodos_usecase.dart';
+import 'features/todo/domain/usecases/updateTodo_usecase.dart';
 import 'features/todo/presentation/pages/todo_page.dart';
+import 'features/todo/presentation/providers/todo_provider.dart';
 
 void main() {
   // criando dependencias
@@ -16,41 +19,28 @@ void main() {
   final updateTodoUseCase = UpdateTodoUseCase(repository);
   final deleteTodoUseCase = DeleteTodoUseCase(repository);
 
-  runApp(MyApp(
-    getTodosUseCase: getTodosUseCase,
-    addTodoUseCase: addTodoUseCase,
-    updateTodoUseCase: updateTodoUseCase,
-    deleteTodoUseCase: deleteTodoUseCase,
-  ));
-}
-
-class MyApp extends StatelessWidget {
-  final GetTodosUseCase getTodosUseCase;
-  final AddTodoUseCase addTodoUseCase;
-  final UpdateTodoUseCase updateTodoUseCase;
-  final DeleteTodoUseCase deleteTodoUseCase;
-
-  const MyApp({
-    Key? key,
-    required this.getTodosUseCase,
-    required this.addTodoUseCase,
-    required this.updateTodoUseCase,
-    required this.deleteTodoUseCase,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'App de To-Do List com DDD',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: TodoPage(
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => TodoProvider(
         getTodosUseCase: getTodosUseCase,
         addTodoUseCase: addTodoUseCase,
         updateTodoUseCase: updateTodoUseCase,
         deleteTodoUseCase: deleteTodoUseCase,
       ),
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'App de To-Do List com DDD',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const TodoPage(),
     );
   }
 }
